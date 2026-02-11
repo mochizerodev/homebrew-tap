@@ -1,0 +1,32 @@
+name: Update mochi-sticky formula
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "23 7 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update formula
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ruby scripts/update-mochi-sticky-formula.rb
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "Update mochi-sticky formula"
+          commit-message: "Update mochi-sticky formula"
+          branch: "automation/update-mochi-sticky-formula"
+          delete-branch: true
+          body: "Automated formula update from latest upstream GitHub Release."
+
